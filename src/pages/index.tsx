@@ -5,6 +5,13 @@ import { useRouter } from 'next/router'
 // import { renderSlackText } from "../helpers/render";
 
 
+const formatTime = (ts: string) => {
+  const splitTime = ts.split(".");
+  const unixTimeStr = `${splitTime[0]}${splitTime[1].slice(0,3)}`
+  return (new Date(parseInt(unixTimeStr))).toLocaleString("en-US");
+}
+
+
 const SlackMessage = ({ slackMessage, slackUsersMap, slackConversationsMap }: { slackMessage: any, slackUsersMap: { [id: string]: any }, slackConversationsMap: { [id: string]: any } }) => {
   const [threadExpanded, setThreadExpanded] = useState(false);
   
@@ -15,7 +22,7 @@ const SlackMessage = ({ slackMessage, slackUsersMap, slackConversationsMap }: { 
     <div className="flex items-start mb-4">
       <img src={sender?.data?.profile?.image_72} className="w-8 h-8 mr-2 rounded"/>
       <div>
-        <div className="flex items-center font-medium">{sender?.data?.real_name}</div>
+        <div className="flex items-center font-medium">{sender?.data?.real_name}<div className="text-xs font-light ml-2">{formatTime(slackMessage.ts)}</div></div>
         <div className="text-sm break-words">{slackMessage.data.text}</div>
         {!!slackMessage.data.files?.length && <div className="flex flex-wrap">{
           map(slackMessage.data.files, (file) => {
