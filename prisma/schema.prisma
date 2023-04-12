@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model SlackConversation {
+  id   String     @id
+  data Json
+  updatedAt DateTime
+}
+
+model SlackUser {
+  id        String     @id
+  data Json
+  updatedAt DateTime
+}
+
+model SlackMessage {
+  ts        String  @unique
+  channel String
+  data Json
+  updatedAt DateTime
+  slackReplies SlackReply[]
+  @@id([ts, channel])
+}
+
+model SlackReply {
+  ts        String
+  slackMessage SlackMessage @relation(fields: [parentTs], references: [ts])
+  parentTs String
+  data Json
+  updatedAt DateTime
+  @@id([ts, parentTs])
+}
+
+model BackfillChannel {
+  channel String @id
+  completedAt DateTime?
+  latestTs String?
+}
+
+model ReplyFetchQueue {
+  parentTs String @id
+  channel String
+  completedAt DateTime?
+}
