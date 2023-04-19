@@ -127,6 +127,7 @@ const fetchConversationHistory = async (channelId, latestThreadTs) => {
 }
 
 const fetchConversationReplies = async (channelId, ts) => {
+  console.log("Fetching conversation replies", channelId, ts);
   const response = await fetch(`https://slack.com/api/conversations.replies?channel=${channelId}&ts=${ts}&limit=999`,
   {
     headers: {
