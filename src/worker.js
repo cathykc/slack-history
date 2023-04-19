@@ -147,6 +147,10 @@ const fetchConversationReplies = async (channelId, ts) => {
 
   const responseBody = await response.json();
   if (!responseBody.ok) {
+    if (responseBody.error === "thread_not_found") {
+      return [];
+    }
+
     console.log("Failed to fetch conversations.replies (SlackAPI error):", responseBody);
     return null;
   }
