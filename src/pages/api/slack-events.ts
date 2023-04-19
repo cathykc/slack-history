@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
+const prisma = new PrismaClient();
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { event } = req.body;
 
@@ -11,7 +13,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   console.log("Received event:", event);
 
-  const prisma = new PrismaClient();
   const updatedAt = new Date();
 
   if (event.type !== "message") {
