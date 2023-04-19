@@ -103,6 +103,23 @@ const fetchConversationHistory = async (channelId, latestThreadTs) => {
   const responseBody = await response.json();
   if (!responseBody.ok) {
     console.log("Failed to fetch conversation history (SlackAPI error):", responseBody);
+    if (responseBody.error === "not_in_channel") {
+      console.log("Joining channel", channelId);
+      const joinResponse = await fetch(`https://slack.com/api/conversations.join?channel=${channelId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
+        },
+      });
+      const joinResponseBody = await joinResponse.json();
+      if (!joinResponseBody.ok) {
+        console.log("Failed to join channel:", joinResponseBody);
+        return [[], null];
+      }
+
+      return await fetchConversationHistory(channelId, latestThreadTs);
+    }
+
     return [[], latestThreadTs];
   }
 
