@@ -147,7 +147,7 @@ const fetchConversationReplies = async (channelId, ts) => {
 
   const responseBody = await response.json();
   if (!responseBody.ok) {
-    if (responseBody.error === "thread_not_found") {
+    if (responseBody.error === "thread_not_found" || responseBody.error === "channel_not_found") {
       return [];
     }
 
