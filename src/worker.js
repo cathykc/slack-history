@@ -10,7 +10,8 @@ const fetchMap = {
   slackConversationsFetchedAt: null,
 }
 
-const backfillCutoffTs = "1681233252.216899";
+const backfillCutoffTs = "1688830215.292839";
+const oldestBackfillCutoffTs = "1681233252.216899";
 
 const sleep = (milliseconds) => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -83,7 +84,7 @@ const fetchSlackConversations = async (cursor) => {
 }
 
 const fetchConversationHistory = async (channelId, latestThreadTs) => {
-  const response = await fetch(`https://slack.com/api/conversations.history?channel=${channelId}&latest=${latestThreadTs}&limit=500`,
+  const response = await fetch(`https://slack.com/api/conversations.history?channel=${channelId}&latest=${latestThreadTs}${oldestBackfillCutoffTs ? `&oldest=${oldestBackfillCutoffTs}` : ""}&limit=500`,
   {
     headers: {
       Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
