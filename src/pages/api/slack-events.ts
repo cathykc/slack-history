@@ -20,11 +20,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
 
-  if (event.type !== "message") {
-    res.status(200).end();
-    return;
-  }
-
   if (event.subtype === "message_changed") {
     const { message } = event;
 
@@ -68,38 +63,34 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
 
-  if (!event.subtype) {
-    if (event.thread_ts && event.thread_ts !== event.ts) {
-      await prisma.slackReply.upsert({
-        where: { ts_parentTs: {
-          ts: event.ts,
-          parentTs: event.thread_ts
-        } },
-        update: {},
-        create: {
-          ts: event.ts,
-          parentTs: event.thread_ts,
-          data: event,
-          updatedAt,
-        }
-      })
-    } else {
-      await prisma.slackMessage.upsert({
-        where: { ts_channel: {
-          ts: event.ts,
-          channel: event.channel
-        } },
-        update: {},
-        create: {
-          ts: event.ts,
-          channel: event.channel,
-          data: event,
-          updatedAt,
-        }
-      })
-    }
-    res.status(200).end();
-    return;
+  if (event.thread_ts && event.thread_ts !== event.ts) {
+    await prisma.slackReply.upsert({
+      where: { ts_parentTs: {
+        ts: event.ts,
+        parentTs: event.thread_ts
+      } },
+      update: {},
+      create: {
+        ts: event.ts,
+        parentTs: event.thread_ts,
+        data: event,
+        updatedAt,
+      }
+    })
+  } else {
+    await prisma.slackMessage.upsert({
+      where: { ts_channel: {
+        ts: event.ts,
+        channel: event.channel
+      } },
+      update: {},
+      create: {
+        ts: event.ts,
+        channel: event.channel,
+        data: event,
+        updatedAt,
+      }
+    })
   }
 
   res.status(200).end();
